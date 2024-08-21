@@ -1,0 +1,22 @@
+{
+  "name": "backend-inventory",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.4.1",
+    "prisma": "^5.18.0",
+    "tsx": "^4.17.0"
+  },
+  "scripts": {
+    "start": "bun run index.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0"
+  }
+}
