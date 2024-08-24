@@ -1,7 +1,7 @@
 import { IncomingMessage,ServerResponse } from 'http';
 
-enum Role {
-    Customer = "Customer",
+export enum Role {
+    SuperAdmin = "SuperAdmin",
     Admin = "Admin"
 }
 
@@ -13,6 +13,10 @@ export interface MiddlewareLogin {
 
 export interface MiddlewareSignup {
     (req: SignupRequest, res: ServerResponse, next: NextFunction): void | Promise<void>;
+}
+
+export interface MiddlewareProduct {
+    (req: ProductRequest, res: ServerResponse): void | Promise<void>;
 }
 
 export interface CookieOptions {
@@ -44,5 +48,24 @@ export interface LoginRequest extends IncomingMessage {
         username: string;
         password: string;
         role: Role
+    }
+}
+
+export interface ProductRequest extends IncomingMessage {
+    body: {
+        name: string;
+        description: string;
+        status: string;
+        category: string
+    }
+}
+
+export interface ProductRequestById extends IncomingMessage {
+    body: {
+        name: string;
+        description: string;
+        status: string;
+        category: string;
+       
     }
 }
