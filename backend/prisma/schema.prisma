@@ -19,7 +19,7 @@ model User {
   password              String
   field                 String?
   description           String
-  role                  Role      @default(Customer)
+  role                  Role      @default(Admin)
   created_at            DateTime? @default(now())
 }
 
@@ -28,8 +28,16 @@ model Product {
   name                  String    @db.Text() @unique
   stock                 Stock[]
   description           String
-  status                Status
+  status                Status?   @default(OK)    
+  category              String
+  photo                 Photo[]
   created_at            DateTime? @default(now())
+}
+
+model Photo {
+  id                    Int       @id @default(autoincrement()) @unique
+  name                  Product   @relation(fields: [photo_name], references: [name])
+  photo_name            String
 }
 
 model Stock {
@@ -40,17 +48,15 @@ model Stock {
   jumlah                Int
   expired_date          DateTime?
   date_buy              DateTime
-
 }
 
 enum Status {
   Pending
   OK
   Expired
-  Outdated
 }
 
 enum Role {
-  Customer
+  SuperAdmin
   Admin
 }
