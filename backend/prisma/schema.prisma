@@ -29,9 +29,15 @@ model Product {
   stock                 Stock[]
   description           String
   status                Status?   @default(OK)    
-  category              String
+  category              Category[]
   photo                 Photo[]
   created_at            DateTime? @default(now())
+}
+
+model Category {
+  id                    Int       @id @default(autoincrement()) @unique
+  name                  Product   @relation(fields: [category_name], references: [name])
+  category_name         String    @db.Text() @unique
 }
 
 model Photo {
