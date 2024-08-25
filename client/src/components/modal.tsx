@@ -2,29 +2,35 @@ import React, { useState } from 'react';
 
 interface ModalProps {
     isClick: boolean;
-    closeModal: () => void;
     category: Array<Array<string>>;
+    setValue: (category: string) => void;
+    closeModal: () => void;
 }
 
-const Modal = ({ isClick, closeModal, category }: ModalProps) => {
+const Modal = ({ isClick, closeModal, category, setValue }: ModalProps) => {
     // State to keep track of the currently clicked parent and child buttons
     const [selectedParent, setSelectedParent] = useState<string | null>(null);
     const [selectedChild, setSelectedChild] = useState<string | null>(null);
 
     // Function to group items by their parent name
-    const groupByParent = (data: Array<Array<string>>) => {
+    const groupByParent = (data: Array<Array<string>>): { [key: string]: Array<string> } => {
         const grouped: { [key: string]: Array<string> } = {};
 
-        data.forEach((item) => {
-            const parentName = item[0]; // e.g., 'Kaos' or 'Celana'
-            const childName = item[1]; // e.g., 'Kaos Merah' or 'Jeans'
+        // Ensure data is an array and not undefined
+        if (Array.isArray(data)) {
+            data.forEach((item) => {
+                if (Array.isArray(item) && item.length >= 2) {
+                    const parentName = item[0]; // e.g., 'Kaos' or 'Celana'
+                    const childName = item[1]; // e.g., 'Kaos Merah' or 'Jeans'
 
-            if (grouped[parentName]) {
-                grouped[parentName].push(childName);
-            } else {
-                grouped[parentName] = [childName];
-            }
-        });
+                    if (grouped[parentName]) {
+                        grouped[parentName].push(childName);
+                    } else {
+                        grouped[parentName] = [childName];
+                    }
+                }
+            });
+        }
 
         return grouped;
     };
@@ -65,7 +71,7 @@ const Modal = ({ isClick, closeModal, category }: ModalProps) => {
             <form className="bg-[#ffff] rounded-xl flex flex-col p-4 w-[60%] h-[80%] gap-2">
                 <div className="flex flex-col gap-2">
                     <p className="text-xl">Kategori</p>
-                  
+
                     <div className="flex h-[22rem] border overflow-auto">
                         {/* Parent Buttons Column */}
                         <div className="flex flex-col w-1/2 border-r-2 p-2">
@@ -92,7 +98,7 @@ const Modal = ({ isClick, closeModal, category }: ModalProps) => {
                         {/* Child Buttons Column */}
                         <div className="flex flex-col w-1/2 p-2">
                             {selectedParent && groupedCategories[selectedParent] && (
-                                <div className="flex flex-col mb-2  p-1 rounded-xl border-gray-300">
+                                <div className="flex flex-col mb-2 p-1 rounded-xl border-gray-300">
                                     {groupedCategories[selectedParent].map((childName, childIndex) => (
                                         <button
                                             key={childIndex}
@@ -112,7 +118,10 @@ const Modal = ({ isClick, closeModal, category }: ModalProps) => {
                     <p className="text-lg font-semibold mb-2"><span>Dipilih :</span> {displayHierarchy()}</p> {/* Display the hierarchy */}
                 </div>
                 <div className="flex justify-end gap-2">
-                    <button type="button" className="border p-2 rounded-xl">Accept</button>
+                    <button type="button" className="border p-2 rounded-xl" onClick={() => {
+                        setValue(displayHierarchy());
+                        closeModal()
+                    }}>Accept</button>
                     <button type="button" onClick={closeModal} className="border p-2 rounded-xl">
                         Cancel
                     </button>
