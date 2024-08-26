@@ -37,8 +37,8 @@ model Product {
 model Category {
   id                    Int       @id @default(autoincrement()) @unique
   name                  Product   @relation(fields: [category_name], references: [name])
-  category_name         String    @db.Text() @unique
-  path  String
+  category_name         String    @db.Text() 
+  path                  String    @unique
 }
 
 model Photo {
