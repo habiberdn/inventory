@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { ServerResponse, IncomingMessage } from 'http';
+import { PrismaClient,Role } from "@prisma/client";
+import { ServerResponse } from 'http';
 import bcrypt from 'bcryptjs';
 import { AppError } from "../utils/appError";
 import jwt from 'jsonwebtoken';
@@ -34,15 +34,12 @@ const createSendToken = (user: User, statusCode: number, res: ServerResponse): v
     cookieOptions['secure'] = true;
   }
 
-  // Remove password from the user object before sending it in the response
   user.password = undefined;
 
-  // Set cookies on the response
   res.setHeader('jwt', [
     `jwt=${token}; Path=${cookieOptions.path}; Domain=${cookieOptions.domain}; Expires=${cookieOptions.expires.toUTCString()}`,
     `jwt=${token}; Path=/addProduct; Domain=${cookieOptions.domain}; Expires=${cookieOptions.expires.toUTCString()}`,
   ]);
-  // Send the response
   res.statusCode = statusCode;
   res.setHeader('Content-Type', 'application/json');
   res.end(
@@ -66,7 +63,7 @@ export const signup : MiddlewareSignup= async (req, res, next) => {
         password: hashPassword,
         field: req.body.field,
         description : req.body.description,
-        role : req.body.role
+        role : req.body.role as Role
       },
     });
 
@@ -82,12 +79,10 @@ export const signup : MiddlewareSignup= async (req, res, next) => {
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
   
-    // Type guard to check if error is an instance of Error
     if (error instanceof Error) {
       res.end(JSON.stringify({ error: error.message }));
       console.error(error);
     } else {
-      // If the error is not an instance of Error, handle it differently
       console.error('An unknown error occurred', error);
       res.end(JSON.stringify({ error: 'An unknown error occurred' }));
     }
