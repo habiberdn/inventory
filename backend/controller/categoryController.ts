@@ -12,22 +12,23 @@ export const createCategory = async (req: Request): Promise<Response> => {
     try {
         let newPath: string;
 
-        const { path, category_name, parentId } = await req.json();
+        const { category_name, parentId } = await req.json();
+
+        if (!category_name) {
+            return new Response(
+                JSON.stringify({ error: 'category_name are required' }),
+                { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
 
         if (parentId) {
-            if (!path || !category_name) {
-                return new Response(
-                    JSON.stringify({ error: 'path, category_name, are required' }),
-                    { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-                );
-            }
 
             const parentCategory = await prisma.category.findUnique({
                 where: {
-                    path: parentId
+                    id: parseInt(parentId)
                 }
             });
-
+            console.log("masuk")
             if (!parentCategory) {
                 return new Response(
                     JSON.stringify({ error: 'Parent category not found' }),
@@ -39,19 +40,28 @@ export const createCategory = async (req: Request): Promise<Response> => {
 
         } else {
             // This is a root category (no parent)
-            const maxRootId = await prisma.$queryRaw<number[]>`
-              SELECT COALESCE(MAX(CAST(SUBSTRING(path FROM '^[0-9]+') AS INTEGER)), 0) + 1 AS max_root_id
-              FROM "Category"
-              WHERE path ~ '^[0-9]+$'
-            `;
+            const maxRootIdResult = await prisma.$queryRaw<{ max_root_id: number }[]>`
+            SELECT COALESCE(MAX(CAST(SUBSTRING(path FROM '^[0-9]+') AS INTEGER)), 0) + 1 AS max_root_id
+            FROM "Category"
+            WHERE path ~ '^[0-9]+$'
+        `;
 
-            newPath = `${maxRootId[0]}`;
+            // Ensure the result array has at least one element
+            if (maxRootIdResult.length > 0) {
+                const maxRootId = maxRootIdResult[0].max_root_id; 
+                newPath = `${maxRootId}`;
+                console.log(maxRootId.toString());
+            } else {
+                console.log('No root ID found, defaulting to 1');
+                newPath = "1"; 
+            }
+
         }
 
         const newCategory = await prisma.category.create({
             data: {
-                name: category_name,
-                path: newPath
+                category_name: category_name,
+                path:newPath,
             }
         });
 
