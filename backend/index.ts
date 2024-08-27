@@ -1,13 +1,13 @@
 import productController from "./controller/productController";
-
-type Path = '/products';
+import { createCategory, getAllCategory } from "./controller/categoryController";
+type Path = '/products' | '/category';
 type Method = 'GET' | 'PUT' | 'POST' | 'DELETE';
 type ApiEndpoint = `${Method} ${Path}`;
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', 
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', 
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization', 
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
 function handleCors(req: Request) {
@@ -22,7 +22,7 @@ function handleCors(req: Request) {
 
 const server = Bun.serve({
   port: 3000,
-  async fetch(req) { 
+  async fetch(req) {
     try {
       const corsResponse = handleCors(req);
       if (corsResponse) return corsResponse;
@@ -35,14 +35,17 @@ const server = Bun.serve({
         case 'PUT /products':
           return new Response(
             JSON.stringify({ message: `You called PUT /products` }),
-            { headers: { 
-              'Content-Type': 'application/json', ...corsHeaders }, status: 200 }
+            {
+              headers: {
+                'Content-Type': 'application/json', ...corsHeaders
+              }, status: 200
+            }
           );
 
         case 'GET /products':
           try {
             // Directly return the response from the controller
-            return await productController.getProducts(req); 
+            return await productController.getProducts(req);
           } catch (err) {
             console.error(err);
             return new Response(
@@ -50,17 +53,39 @@ const server = Bun.serve({
               { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
             );
           }
-          case 'POST /products':
-            try {
-              // Directly return the response from the controller
-              return await productController.createProduct(req); 
-            } catch (err) {
-              console.error(err);
-              return new Response(
-                JSON.stringify({ message: 'Error fetching data' }),
-                { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
-              );
-            }
+        case 'POST /products':
+          try {
+            // Directly return the response from the controller
+            return await productController.createProduct(req);
+          } catch (err) {
+            console.error(err);
+            return new Response(
+              JSON.stringify({ message: 'Error fetching data' }),
+              { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
+            );
+          }
+        case 'POST /category':
+          try {
+            // Directly return the response from the controller
+            return await createCategory(req);
+          } catch (err) {
+            console.error(err);
+            return new Response(
+              JSON.stringify({ message: 'Error fetching data' }),
+              { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
+            );
+          }
+        case 'GET /category':
+          try {
+            // Directly return the response from the controller
+            return await getAllCategory(req);
+          } catch (err) {
+            console.error(err);
+            return new Response(
+              JSON.stringify({ message: 'Error fetching data' }),
+              { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
+            );
+          }
 
         default:
           return new Response(
@@ -72,6 +97,17 @@ const server = Bun.serve({
       console.log(err);
       return new Response(JSON.stringify({ message: 'Internal Server Error' }), { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 });
     }
+  },
+  websocket: {
+    open(ws) {
+      console.log("WebSocket connection opened", ws);
+    },
+    message(ws, message) {
+      console.log("Received WebSocket message", message);
+    },
+    close(ws) {
+      console.log("WebSocket connection closed", ws);
+    },
   },
 });
 
