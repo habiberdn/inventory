@@ -5,28 +5,27 @@ import { AppError } from "../utils/appError";
 const prisma = new PrismaClient();
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': '*', 
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', 
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization', 
-  };
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
 
-const createProduct = async (req:Request): Promise<Response> => {
+const createProduct = async (req: Request): Promise<Response> => {
     try {
         const body = await req.json();
-        const { name, description, category } = body;
+        const { name, description } = body;
 
         const product = await prisma.product.create({
             data: {
                 name,
                 description,
                 status: body.status as Status,
-                category
             },
         });
 
         return new Response(JSON.stringify(product), {
             status: 200,
-            headers: { 'Content-Type': 'application/json',...corsHeaders },
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -43,7 +42,7 @@ const getProducts = async (req: Request): Promise<Response> => {
         console.log(products);
         return new Response(JSON.stringify(products), {
             status: 200,
-            headers: { 'Content-Type': 'application/json',...corsHeaders },
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
     } catch (error) {
         console.error('Error fetching products:', error);
