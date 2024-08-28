@@ -13,13 +13,14 @@ const corsHeaders = {
 const createProduct = async (req: Request): Promise<Response> => {
     try {
         const body = await req.json();
-        const { name, description } = body;
+        const { name, description,category } = body;
 
         const product = await prisma.product.create({
             data: {
                 name,
                 description,
                 status: body.status as Status,
+                category
             },
         });
 
@@ -39,7 +40,6 @@ const createProduct = async (req: Request): Promise<Response> => {
 const getProducts = async (req: Request): Promise<Response> => {
     try {
         const products = await prisma.product.findMany();
-        console.log(products);
         return new Response(JSON.stringify(products), {
             status: 200,
             headers: { 'Content-Type': 'application/json', ...corsHeaders },

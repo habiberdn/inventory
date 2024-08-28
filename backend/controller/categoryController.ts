@@ -16,19 +16,16 @@ export const createCategory = async (req: Request): Promise<Response> => {
 
         if (!category_name) {
             return new Response(
-                JSON.stringify({ error: 'category_name are required' }),
+                JSON.stringify({ error: 'category_name is required' }),
                 { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             );
         }
 
         if (parentId) {
-
             const parentCategory = await prisma.category.findUnique({
-                where: {
-                    id: parseInt(parentId)
-                }
+                where: { id: parseInt(parentId) }
             });
-            console.log("masuk")
+
             if (!parentCategory) {
                 return new Response(
                     JSON.stringify({ error: 'Parent category not found' }),
@@ -37,31 +34,24 @@ export const createCategory = async (req: Request): Promise<Response> => {
             }
 
             newPath = `${parentCategory.path}.${parentId}`;
-
         } else {
             // This is a root category (no parent)
             const maxRootIdResult = await prisma.$queryRaw<{ max_root_id: number }[]>`
-            SELECT COALESCE(MAX(CAST(SUBSTRING(path FROM '^[0-9]+') AS INTEGER)), 0) + 1 AS max_root_id
-            FROM "Category"
-            WHERE path ~ '^[0-9]+$'
-        `;
+                SELECT COALESCE(MAX(CAST(SUBSTRING(path FROM '^[0-9]+') AS INTEGER)), 0) + 1 AS max_root_id
+                FROM "Category"
+                WHERE path ~ '^[0-9]+$'
+            `;
 
-            // Ensure the result array has at least one element
-            if (maxRootIdResult.length > 0) {
-                const maxRootId = maxRootIdResult[0].max_root_id; 
-                newPath = `${maxRootId}`;
-                console.log(maxRootId.toString());
-            } else {
-                console.log('No root ID found, defaulting to 1');
-                newPath = "1"; 
-            }
-
+            // If no records are present, default to 1
+            const maxRootId = maxRootIdResult.length > 0 ? maxRootIdResult[0].max_root_id : 1;
+            newPath = `${maxRootId}`;
         }
 
+        // Create the new category
         const newCategory = await prisma.category.create({
             data: {
                 category_name: category_name,
-                path:newPath,
+                path: newPath,
             }
         });
 
@@ -79,13 +69,10 @@ export const createCategory = async (req: Request): Promise<Response> => {
     }
 };
 
-
 export const getAllCategory = async (req: Request): Promise<Response | undefined> => {
-    const categoryData = await prisma.category.findMany()
-
+    const categoryData = await prisma.category.findMany();
     return new Response(JSON.stringify(categoryData), {
         status: 200,
-        headers: { 'Content-Type': 'application/json', },
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
 }
-
