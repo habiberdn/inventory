@@ -1,5 +1,5 @@
 import productController from "./controller/productController";
-import { createCategory, getAllCategory } from "./controller/categoryController";
+import { createCategory, getAllCategories } from "./controller/categoryController";
 type Path = '/products' | '/category';
 type Method = 'GET' | 'PUT' | 'POST' | 'DELETE';
 type ApiEndpoint = `${Method} ${Path}`;
@@ -67,7 +67,12 @@ const server = Bun.serve({
         case 'POST /category':
           try {
             // Directly return the response from the controller
-            return await createCategory(req);
+            const { category_name, level, parentId } = await req.json()
+            const categories = await createCategory(category_name, level, parentId);
+            return new Response(JSON.stringify(categories), {
+              headers: { 'Content-Type': 'application/json', ...corsHeaders },
+              status: 201,
+            });
           } catch (err) {
             console.error(err);
             return new Response(
@@ -78,7 +83,11 @@ const server = Bun.serve({
         case 'GET /category':
           try {
             // Directly return the response from the controller
-            return await getAllCategory(req);
+            const categories = await getAllCategories();
+            return new Response(JSON.stringify(categories), {
+              headers: { 'Content-Type': 'application/json', ...corsHeaders },
+              status: 200,
+            });
           } catch (err) {
             console.error(err);
             return new Response(
