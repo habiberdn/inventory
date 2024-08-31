@@ -18,14 +18,22 @@ interface Product {
 interface Category {
     id: number;
     category_name: string;
-    path: string;
-}
+    level: number;
+    parentId?: number;
+    subcategories?: Category[];
+  }
 
 function AddProduct() {
     const [digit, setDigit] = useState(0);
     const [isClick, setClick] = useState(false);
     const [products, setProducts] = useState<Product[]>([]);
-    const [value, setValue] = useState<string[][]>([]);
+    const [value, setValue] = useState<Product>({
+        id: 0,
+        name: "",
+        description: "",
+        category: "",
+        status: false
+    });
     const [category, setCategory] = useState<Category[]>([]);  // Change type to Category[]
 
     function addFlag(productCategory: string) {
@@ -36,10 +44,16 @@ function AddProduct() {
             }
         });
     }
-
+    console.log(value)
     const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const { value } = e.target;
+        const { value,name } = e.target;
         setDigit(value.length);
+        setValue((prev) => {
+            return {
+                ...prev,
+                [name]: value
+            }
+        });
     };
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +84,7 @@ function AddProduct() {
             })
             .catch((error) => console.error("Error fetching category :", error));
     }, []);
-
+    console.log(category)
     const handleClick: MouseEventHandler<HTMLInputElement> = () => {
         setClick(!isClick);
     }
@@ -95,14 +109,14 @@ function AddProduct() {
                                 </div>
                                 <div className="grid w-[70%] items-center gap-1.5 z-20 h-[4rem]">
                                     <label htmlFor="Kategori" className="text-sm">Kategori</label>
-                                    <Input type="text" id="Kategori" placeholder="Kategori" onClick={handleClick} name="category" onChange={handleChangeInput} />
+                                    <Input type="text" id="Kategori" placeholder="Kategori" onClick={handleClick} name="category"  onChange={handleChangeInput} value={value.category}/>
                                     <div className="flex justify-center items-center">
                                         {isClick && <Modal isClick={isClick} closeModal={closeModal} category={category} getValue={addFlag} />}
                                     </div>
                                 </div>
                                 <div className="grid w-[70%] items-center gap-1.5">
                                     <label htmlFor="Deskripsi" className="text-sm">Deskripsi Barang</label>
-                                    <Textarea id="Deskripsi" placeholder="Deskripsi Barang" onChange={handleTextAreaChange} maxLength={100} />
+                                    <Textarea id="Deskripsi" placeholder="Deskripsi Barang" onChange={handleTextAreaChange} maxLength={100} name="description" />
                                     <p className="text-right text-[#8E8E8E] text-sm">{digit}/100</p>
                                 </div>
                             </div>
