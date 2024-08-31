@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Category {
   id: number;
@@ -21,6 +22,7 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
   const [groupedCategories, setGroupedCategories] = useState<{ [key: number]: Category[] }>({});
   const [newCategoryName, setNewCategoryName] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
+  
 
   useEffect(() => {
     const flattenCategories = (data: Category[], parentId: number | null = null, level: number = 0): Category[] => {
@@ -59,8 +61,15 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
   const handleCategoryClick = (id: number, event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const level = categories.find((cat) => cat.id === id)?.level ?? 0;
-    const newSelectedPath = [...selectedPath.slice(0, level), id];
-    setSelectedPath(newSelectedPath);
+  
+    // If the category is already selected, unselect it by removing it from the path
+    if (selectedPath.includes(id)) {
+      setSelectedPath((prev) => prev.filter((pathId) => pathId !== id));
+    } else {
+      // Otherwise, add it to the path
+      const newSelectedPath = [...selectedPath.slice(0, level), id];
+      setSelectedPath(newSelectedPath);
+    }
   };
 
   const displayHierarchy = () => {
@@ -100,31 +109,44 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
     );
   };
 
-  const handleInsert = () => {
+  const handleInsert = async () => {
     if (newCategoryName.trim() === '') return;
-
+  
     const parentId = selectedPath[selectedPath.length - 1] ?? 0; // Get the last selected category as parent
     const newLevel = (categories.find((cat) => cat.id === parentId)?.level ?? -1) + 1;
-
+  
     const newCategory: Category = {
       id: categories.length + 1, // Assign a new ID (you might want to handle this differently)
       category_name: newCategoryName,
       level: newLevel,
-      parentId: parentId === 0 ? undefined : parentId, // Only set parentId if it's not the root
+      parentId: parentId === 0 ? undefined : parentId,
     };
-
-    // Update categories with the new category
-    setCategories((prev) => [...prev, newCategory]);
-    setNewCategoryName('');
-
-    // Clear the selected path if a new parent category was added
-    if (parentId === 0) {
-      setSelectedPath([]);
-    } else {
-      setSelectedPath((prev) => [...prev, newCategory.id]);
+  
+    // Log the new category to the console
+    console.log('New Category:', newCategory);
+  
+    try {
+      await axios.post<Category>("http://localhost:3000/category", newCategory);
+      // Update categories with the new category
+      setCategories((prev) => [...prev, newCategory]);
+      setNewCategoryName('');
+  
+      // Clear the selected path if a new parent category was added
+      if (parentId === 0) {
+        setSelectedPath([]);
+      } else {
+        setSelectedPath((prev) => [...prev, newCategory.id]);
+      }
+  
+      // Set success message
+      toast.success('Successfully Created!')
+    } catch (error) {
+      console.error('Error inserting category:', error);
+      // Set error message
+      toast.error("This didn't work.")
     }
   };
-
+  
   // Helper function to build the hierarchical structure
   const buildHierarchy = (categories: Category[], parentId: number | undefined = undefined): Category[] => {
     return categories
@@ -134,6 +156,7 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
         subcategories: buildHierarchy(categories, category.id),
       }));
   };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -158,7 +181,6 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
       // Send the hierarchical data to the backend
       // await axios.post('http://localhost:3000/category', hierarchicalData);
 
-
       // Close the modal on success
       closeModal();
     } catch (error) {
@@ -173,6 +195,7 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
         isClick ? 'flex' : 'hidden'
       }`}
     >
+      
       <form className="bg-[#ffff] rounded-xl flex flex-col p-4 w-[60%] h-[90%] gap-2">
         <div className="flex flex-col gap-2">
           <p className="text-xl">Kategori</p>
@@ -183,6 +206,8 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
           <p className="text-lg font-semibold mb-2">
             <span>Dipilih :</span> {displayHierarchy()}
           </p>
+          {/* Display the feedback message */}
+          <Toaster />
         </div>
         <div className="flex gap-2">
           <input
