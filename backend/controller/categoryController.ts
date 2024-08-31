@@ -2,6 +2,12 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
 export const createCategory = async (
   category_name: string,
   level: number,
@@ -25,23 +31,37 @@ export const createCategory = async (
 export const getAllCategories = async () => {
   try {
     const categories = await prisma.category.findMany({
+      where: { parentId: null }, // Start with top-level categories
       include: {
-        subcategories: true, 
+        subcategories: {
+          include: {
+            subcategories: {
+              include: {
+                subcategories: true, // Fetch multiple levels of subcategories recursively
+              },
+            },
+          },
+        },
       },
     });
-    return categories;
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    throw error;
+    return new Response(JSON.stringify(categories), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      status: 200,
+    });
+  } catch (err) {
+    return new Response(
+      JSON.stringify({ message: 'Error fetching data' }),
+      { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
+    );
   }
-};
+}
 
 export const getCategoryById = async (id: number) => {
   try {
     const category = await prisma.category.findUnique({
       where: { id },
       include: {
-        subcategories: true, 
+        subcategories: true,
       },
     });
     return category;
