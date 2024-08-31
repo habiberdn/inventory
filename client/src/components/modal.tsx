@@ -23,12 +23,12 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
             
             data.forEach((item) => {
                 const pathParts = item.path.split('.');
-                const parentPath = pathParts.slice(0, -1).join('.'); // Get the immediate parent path
+                const parentPath = pathParts.slice(0, -1).join('.'); 
         
                 if (!grouped[parentPath]) {
                     grouped[parentPath] = [];
                 }
-                grouped[parentPath].push(item);  // Push the item to the correct parent path group
+                grouped[parentPath].push(item);  
             });
             return grouped;
         };
@@ -42,12 +42,12 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
     ) => {
         event.preventDefault();
         setSelectedPath((prev) => {
-            const level = path.split('.').length - 1; // Determine the level of the clicked category
+            const level = path.split('.').length - 1; 
             console.log('Before Update Selected Path:', prev);
             let newSelectedPath = [...prev];
-            newSelectedPath[level] = path; // Set the clicked path at the correct level
+            newSelectedPath[level] = path; 
             console.log('Updated Path:', newSelectedPath);
-            return newSelectedPath.slice(0, level + 1); // Ensure state includes up to the newly clicked level
+            return newSelectedPath.slice(0, level + 1); 
         });
     };
 
@@ -67,13 +67,12 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
         console.log("Selected Path:", selectedPath);
         console.log("Level:", level);
         const lastIndex = selectedPath.length - 1;
-        // Return categories grouped by the current path level
         return groupedCategories[currentPath] || groupedCategories[selectedPath[lastIndex]] || [];
     };
     
     const renderCategoryColumn = (level: number) => {
         return (
-            <div key={level} className="flex flex-col w-[200px] border-r-2 p-2 overflow-auto">
+            <div key={level} className="flex flex-col w-[250px] border-r-2 p-2 overflow-auto">
                 {getCurrentLevelCategories(level).map((category) => (
                     <button
                         key={category.id}
@@ -106,7 +105,7 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
             className={`fixed flex justify-center items-center top-0 left-0 w-full h-full bg-[#00000099] ${isClick ? 'flex' : 'hidden'
                 }`}
         >
-            <form className="bg-[#ffff] rounded-xl flex flex-col p-4 w-[100%] h-[80%] gap-2 overflow-auto">
+            <form className="bg-[#ffff] rounded-xl flex flex-col p-4 w-[60%] h-[80%] gap-2 overflow-auto">
                 <div className="flex flex-col gap-2">
                     <p className="text-xl">Kategori</p>
 
