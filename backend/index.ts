@@ -67,9 +67,11 @@ const server = Bun.serve({
         case 'POST /category':
           try {
             // Directly return the response from the controller
-            const { category_name, level, parentId } = await req.json()
-            const categories = await createCategory(category_name, level, parentId);
-            return new Response(JSON.stringify(categories), {
+            // const { category_name, level, parentId } = await req.json()
+            const body = await req.json()
+            console.log(body)
+            // const categories = await createCategory(category_name, level, parentId);
+            return new Response(JSON.stringify("categories"), {
               headers: { 'Content-Type': 'application/json', ...corsHeaders },
               status: 201,
             });
@@ -83,11 +85,8 @@ const server = Bun.serve({
         case 'GET /category':
           try {
             // Directly return the response from the controller
-            const categories = await getAllCategories();
-            return new Response(JSON.stringify(categories), {
-              headers: { 'Content-Type': 'application/json', ...corsHeaders },
-              status: 200,
-            });
+            return await getAllCategories();
+            
           } catch (err) {
             console.error(err);
             return new Response(
