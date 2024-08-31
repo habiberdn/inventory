@@ -11,28 +11,6 @@ interface Category {
   subcategories?: Category[];
 }
 
-const Categories: Category[] = 
-[
-  {
-    id: 1,
-    category_name: 'Zhejiang',
-    level: 0,
-    subcategories: [
-      {
-        id: 2,
-        category_name: 'yyy',
-        level: 1,
-        subcategories: [
-          {
-            id: 3,
-            category_name: 'ffffff',
-            level: 2,
-          },
-        ],
-      },
-    ],
-  },
-];
 
 const AddCategory = () => {
   const [isClick, setClick] = useState(false);
