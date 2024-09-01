@@ -1,5 +1,4 @@
 import { PrismaClient, Status } from "@prisma/client";
-import type { MiddlewareProduct } from "../utils/type-utils";
 import { AppError } from "../utils/appError";
 
 const prisma = new PrismaClient();
@@ -13,14 +12,17 @@ const corsHeaders = {
 const createProduct = async (req: Request): Promise<Response> => {
     try {
         const body = await req.json();
-        const { name, description,category } = body;
+        const { name, description,category_name,prize,amount } = body;
 
         const product = await prisma.product.create({
             data: {
                 name,
                 description,
                 status: body.status as Status,
-                category
+                category_name,
+                prize,
+                amount
+
             },
         });
 
