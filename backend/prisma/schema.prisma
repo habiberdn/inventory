@@ -24,9 +24,26 @@ model Product {
   status        Status?   @default(OK)
   created_at    DateTime? @default(now())
   category      Category  @relation(fields: [category_name], references: [category_name])
-  category_name String    
+  category_name String
+  prize         Int
+  amount        Int
+  Variant       Variant[]
   photo         Photo[]
-  stock         Stock[]
+}
+
+model Variant{
+  id            Int        @id @unique @default(autoincrement())
+  variantName   String     @unique
+  product       Product    @relation(fields: [product_name], references: [name])
+  product_name  String
+  variantValue  VariantValue[]
+}
+
+model VariantValue{
+  id            Int        @id @unique @default(autoincrement())
+  name          String
+  variant       Variant    @relation(fields: [variantName], references: [variantName])
+  variantName   String     
 }
 
 model Category {
@@ -43,16 +60,6 @@ model Photo {
   id         Int     @id @unique @default(autoincrement())
   photo_name String
   name       Product @relation(fields: [photo_name], references: [name])
-}
-
-model Stock {
-  id           Int       @id @unique @default(autoincrement())
-  product_name String
-  supplier     String
-  jumlah       Int
-  expired_date DateTime?
-  date_buy     DateTime
-  product      Product   @relation(fields: [product_name], references: [name])
 }
 
 enum Status {
