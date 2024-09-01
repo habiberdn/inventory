@@ -88,12 +88,12 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
 
   const renderCategoryColumn = (level: number) => {
     return (
-      <div key={level} className="flex flex-col w-[250px] min-w-[250px] border-r-2 p-2 overflow-auto">
+      <div key={level} className="flex flex-col w-[250px] min-w-[250px] border-r-2 p-3  ">
         {getCurrentLevelCategories(level).map((category) => (
           <button
             key={category.id}
             type="button"
-            className={`rounded-xl border text-left p-3 w-full flex justify-between items-center ${
+            className={`rounded-xl border text-left p-3 w-full flex justify-between items-center m-1 ${
               selectedPath[level] === category.id ? 'border-blue-500 text-blue-500' : 'border-black text-black'
             }`}
             onClick={(e) => handleCategoryClick(category.id, e)}
