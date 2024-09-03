@@ -41,7 +41,7 @@ model Variant{
 
 model VariantValue{
   id            Int        @id @unique @default(autoincrement())
-  name          String
+  variantValue  String
   variant       Variant    @relation(fields: [variantName], references: [variantName])
   variantName   String     
 }
