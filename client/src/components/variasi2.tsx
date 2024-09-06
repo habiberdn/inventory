@@ -44,6 +44,16 @@ const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: Sec
         onVariantValueChange(newInputs);
     };
 
+    const handleClose = () => {
+        // Reset the states
+        setVariantName('');
+        setInputs(['']);
+        onVariantNameChange('');
+        onVariantValueChange(['']);
+        // Trigger the parent click function
+        click();
+    };
+    
     return (
         <section className="flex flex-col gap-2">
             <div className='bg-[#f2f2f2] p-2 flex flex-col rounded-md'>
@@ -56,7 +66,7 @@ const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: Sec
                         value={variantName}
                         onChange={handleVariantNameChange}
                     />
-                    <CloseButton onClick={click} className='size-2' />
+                    <CloseButton onClick={handleClose} className='size-2' />
                 </div>
                 <div className='grid grid-cols-4 p-2 gap-[40px]'>
                     {inputs.map((input, index) => (
