@@ -49,7 +49,7 @@ const PenjualanInfo = () => {
         <div className="p-6 bg-white flex flex-col rounded-lg gap-2">
             <p className="text-xl font-bold">Informasi Penjualan</p>
             <div className="flex flex-col gap-4 justify-center p-2 ml-[1rem]">
-                <label htmlFor="variasi" className="text-sm font-sans">Variasi</label>
+                <label htmlFor="variasi" className="text-lg font-sans">Variasi</label>
                 {isVariantClick ? (
                     <Variasi click={handleClickVariant} />
                 ) : (
