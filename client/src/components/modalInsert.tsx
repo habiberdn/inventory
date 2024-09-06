@@ -61,7 +61,6 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
   const handleCategoryClick = (id: number, event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const level = categories.find((cat) => cat.id === id)?.level ?? 0;
-  
     // If the category is already selected, unselect it by removing it from the path
     if (selectedPath.includes(id)) {
       setSelectedPath((prev) => prev.filter((pathId) => pathId !== id));
@@ -178,10 +177,6 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
       // Debug: Log the hierarchical data
       console.log('Hierarchical Data:', hierarchicalData);
 
-      // Send the hierarchical data to the backend
-      // await axios.post('http://localhost:3000/category', hierarchicalData);
-
-      // Close the modal on success
       closeModal();
     } catch (error) {
       console.error('Error saving categories:', error);
@@ -206,7 +201,7 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
           <p className="text-lg font-semibold mb-2">
             <span>Dipilih :</span> {displayHierarchy()}
           </p>
-          {/* Display the feedback message */}
+        
           <Toaster />
         </div>
         <div className="flex gap-2">
