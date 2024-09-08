@@ -21,12 +21,9 @@ model Product {
   id            Int       @id @unique @default(autoincrement())
   name          String    @unique
   description   String
-  status        Status?   @default(OK)
   created_at    DateTime? @default(now())
   category      Category  @relation(fields: [category_name], references: [category_name])
   category_name String
-  prize         Int
-  amount        Int
   Variant       Variant[]
   photo         Photo[]
 }
@@ -37,13 +34,19 @@ model Variant{
   product       Product    @relation(fields: [product_name], references: [name])
   product_name  String
   variantValue  VariantValue[]
+  parentId      Int?       
+  parent        Variant?  @relation("VariantToSubcategories", fields: [parentId], references: [id])
+  subcategories Variant[] @relation("VariantToSubcategories")
 }
 
 model VariantValue{
   id            Int        @id @unique @default(autoincrement())
   variantValue  String
   variant       Variant    @relation(fields: [variantName], references: [variantName])
-  variantName   String     
+  variantName   String
+  price         Int
+  amount        Int
+  codeVariant   String       
 }
 
 model Category {
@@ -60,12 +63,6 @@ model Photo {
   id         Int     @id @unique @default(autoincrement())
   photo_name String
   name       Product @relation(fields: [photo_name], references: [name])
-}
-
-enum Status {
-  Pending
-  OK
-  Expired
 }
 
 enum Role {
