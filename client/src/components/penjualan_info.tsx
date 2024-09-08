@@ -1,38 +1,42 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Variasi from "./variasi";
 import { Input } from "../app/ui/input";
 
 interface Product {
     id: number;
-    name: string;
-    description: string;
-    category: string;
-    price: string;  // Added price field
-    status: boolean;
+    name?: string;
+    description?: string;
+    category_name?: string;
+    price?: number;
+    amount?: number;
+    variantName?: string;
+    variantValue?: string[];
+    parentId?: number;
 }
 
-const PenjualanInfo = () => {
-    const [isVariantClick, setVarianClick] = useState(false);
-    const [products, setProducts] = useState<Product[]>([]);
+interface Input {
+    name?: string;
+    description?: string;
+    category_name?: string;
+    price?: number[][];
+    amount?: number[][];
+    variantName?: string[];
+    variantValue?: string[][];
+    codeVariant?: string[][]
+    parentId?: number;
+  }
 
+const PenjualanInfo =  ({ getValue }: { getValue: (input: Input) => void }) => {
+    const [isVariantClick, setVarianClick] = useState(false);
     const [value, setValue] = useState<Product>({
         id: 0,
         name: "",
         description: "",
-        category: "",
-        price: "", // Initialized price field
-        status: false,
+        category_name: "",
+        price: 0, // Initialized price field
+        variantName : "",
+        variantValue : []
     });
-
-    useEffect(() => {
-        axios
-            .get<Product[]>("http://localhost:3000/products")
-            .then((response) => {
-                setProducts(response.data);
-            })
-            .catch((error) => console.error("Error fetching products:", error));
-    }, []);
 
     const handleClickVariant = () => {
         setVarianClick(!isVariantClick);
@@ -51,7 +55,7 @@ const PenjualanInfo = () => {
             <div className="flex flex-col gap-4 justify-center p-2 ml-[1rem]">
                 <label htmlFor="variasi" className="text-lg font-sans">Variasi</label>
                 {isVariantClick ? (
-                    <Variasi click={handleClickVariant} />
+                    <Variasi click={handleClickVariant} getValue={getValue} />
                 ) : (
                     <div className="flex flex-col gap-2">
                         <button className="border-dashed border-2 p-2 hover:border-[#21263c] font-sans" onClick={handleClickVariant}>Add Variasi</button>
