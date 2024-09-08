@@ -174,13 +174,11 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
       // Build the entire hierarchical structure from the flat list
       const hierarchicalData = buildHierarchy(categories);
 
-      // Debug: Log the hierarchical data
       console.log('Hierarchical Data:', hierarchicalData);
 
       closeModal();
     } catch (error) {
       console.error('Error saving categories:', error);
-      // Optionally, handle the error in the UI (e.g., show a message)
     }
   };
 
