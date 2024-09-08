@@ -1,4 +1,4 @@
-import { useState, MouseEventHandler, useEffect } from "react";
+import { useState, useEffect, MouseEventHandler } from "react";
 import axios from "axios";
 import { Input } from "../app/ui/input";
 import { Textarea } from "../app/ui/textarea";
@@ -8,8 +8,8 @@ interface Product {
     id: number;
     name: string;
     description: string;
-    category: string;
-    price: string;  
+    category_name: string;
+    price: string;
     status: boolean;
 }
 
@@ -21,7 +21,23 @@ interface Category {
     subcategories?: Category[];
 }
 
-const ProductInfo = () => {
+interface Input {
+    name?: string;
+    description?: string;
+    category_name?: string;
+    price?: number[][];
+    amount?: number[][];
+    variantName?: string[];
+    variantValue?: string[][];
+    codeVariant?: string[][]
+    parentId?: number;
+  }
+
+interface Props {
+    getValue: (props: Input) => void;
+}
+
+const ProductInfo = ({ getValue }: Props) => {
     const [digit, setDigit] = useState(0);
     const [isClick, setClick] = useState(false);
     const [category, setCategory] = useState<Category[]>([]);
@@ -29,11 +45,12 @@ const ProductInfo = () => {
         id: 0,
         name: "",
         description: "",
-        category: "",
-        price: "", 
+        category_name: "",
+        price: "",  
         status: false,
     });
 
+    // Fetch category data
     useEffect(() => {
         axios
             .get<Category[]>("http://localhost:3000/category")
@@ -43,10 +60,17 @@ const ProductInfo = () => {
             .catch((error) => console.error("Error fetching category:", error));
     }, []);
 
+    useEffect(() => {
+        getValue({
+            ...value,
+            price: [[parseFloat(value.price)]], // Convert string to number
+        }); 
+    }, [value]); // Add value as a dependency
+
     function addFlag(productCategory: string) {
         setValue((prev) => ({
             ...prev,
-            category: productCategory,
+            category_name: productCategory,
         }));
     }
 
@@ -74,6 +98,7 @@ const ProductInfo = () => {
     const closeModal = () => {
         setClick(false);
     };
+
     return (
         <div className="p-6 bg-white flex flex-col rounded-lg gap-4">
             <p className="text-xl font-bold">Informasi Product</p>
@@ -84,7 +109,7 @@ const ProductInfo = () => {
                 </div>
                 <div className="grid w-[70%] items-center gap-1.5 z-20 h-[4rem]">
                     <label htmlFor="Kategori" className="text-sm">Kategori</label>
-                    <Input type="text" id="Kategori" placeholder="Kategori" onClick={handleClick} name="category" onChange={handleChangeInput} value={value.category} />
+                    <Input type="text" id="Kategori" placeholder="Kategori" onClick={handleClick} name="category_name" onChange={handleChangeInput} value={value.category_name} />
                     <div className="flex justify-center items-center">
                         {isClick && <Modal isClick={isClick} closeModal={closeModal} category={category} getValue={addFlag} />}
                     </div>
@@ -96,7 +121,7 @@ const ProductInfo = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default ProductInfo
+export default ProductInfo;
