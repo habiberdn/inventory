@@ -4,18 +4,31 @@ import { MdDelete } from 'react-icons/md';
 
 interface SecondVariasiProps {
     click: () => void;
-    onVariantNameChange: (name: string) => void;
+    onVariantNameChange: (name: string) => void;  // Pass the string value instead of event
     onVariantValueChange: (values: string[]) => void;
 }
+
+interface Input {
+    name?: string;
+    description?: string;
+    category_name?: string;
+    price?: number[][];
+    amount?: number[][];
+    variantName?: string[];
+    variantValue?: string[][];
+    codeVariant?: string[][]
+    parentId?: number;
+  }
 
 const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: SecondVariasiProps) => {
     const [variantName, setVariantName] = useState<string>('');
     const [inputs, setInputs] = useState<string[]>(['']);
 
     const handleVariantNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const name = event.target.value;
-        setVariantName(name);
-        onVariantNameChange(name);
+        const {name,value} = event.target
+        console.log(name,value)
+        setVariantName(value);  
+        onVariantNameChange(value);  
     };
 
     const handleChangeInput = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,9 +40,8 @@ const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: Sec
         } else if (index === inputs.length - 1 && inputs.length < 10 && event.target.value !== '') {
             newInputs.push('');
         }
-
         setInputs(newInputs);
-        onVariantValueChange(newInputs);
+        onVariantValueChange(newInputs);  
     };
 
     const handleDeleteInput = (index: number) => () => {
@@ -50,7 +62,6 @@ const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: Sec
         setInputs(['']);
         onVariantNameChange('');
         onVariantValueChange(['']);
-        // Trigger the parent click function
         click();
     };
     
@@ -61,7 +72,7 @@ const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: Sec
                     <input
                         type="text"
                         name="variantName"
-                        className="p-2 border border-gray-300 rounded-md "
+                        className="p-2 border border-gray-300 rounded-md"
                         placeholder="Enter variant title"
                         value={variantName}
                         onChange={handleVariantNameChange}
@@ -73,8 +84,8 @@ const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: Sec
                         <div key={index} className='flex items-center pr-2 gap-1'>
                             <input
                                 type="text"
-                                name={`variantValue-${index}`}
-                                className="p-2 border border-gray-300 rounded-md "
+                                name={`variantValue`}
+                                className="p-2 border border-gray-300 rounded-md"
                                 placeholder="Enter variant content"
                                 value={input}
                                 onChange={handleChangeInput(index)}
