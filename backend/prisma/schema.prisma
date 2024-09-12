@@ -30,7 +30,7 @@ model Product {
 
 model Variant{
   id            Int        @id @unique @default(autoincrement())
-  variantName   String     @unique
+  variantName   String     
   product       Product    @relation(fields: [product_name], references: [name])
   product_name  String
   variantValue  VariantValue[]
@@ -42,6 +42,7 @@ model Variant{
 model VariantValue{
   id            Int        @id @unique @default(autoincrement())
   variantValue  String
+  secondVariant String?
   variant       Variant    @relation(fields: [variantName], references: [variantName])
   variantName   String
   price         Int

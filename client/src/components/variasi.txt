@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import SecondVariasi from './variasi2';
 import { CloseButton } from '@chakra-ui/react';
 import { MdDelete } from 'react-icons/md';
-import { Console } from 'console';
 
 interface Variant {
     price: []
@@ -26,7 +25,7 @@ interface Input {
 const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Input) => void }) => {
     const [variantName, setVariantName] = useState<string[]>(['']);
     const [variantValue, setVariantValue] = useState<string[][]>([[''], ['']]);
-    const [isvariant2, setClick] = useState(false);
+    const [isClick, setClick] = useState(false);
     const [allVariasi, setAllVariasi] = useState<string[][]>([]);
     const [isImplemented, setIsImplemented] = useState(false);
     const [implVariant, setImplVariant] = useState<Variant>({
@@ -49,7 +48,7 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
 
         const updatedValue: Input = {
             ...value,
-            variantName: newVariantNames,
+            variantName: newVariantNames, 
         };
         setValue(updatedValue);
         getValue(updatedValue);
@@ -74,7 +73,7 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
         const { name, value } = e.target
         const newValues = [...variantValue[index]];
         newValues[inputIndex] = value;
-
+       
         setValue((prev) => ({
             ...prev,
             [name]: value,
@@ -87,32 +86,32 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
         handleVariantValueChange(index)(newValues);
     };
 
-    const handleTableInput = (index: number, var2: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleTableInput = (index: number, ) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
 
-        console.log(index, var2)
+        console.log(index)
 
+        
+    setValue((prev) => {
+        // Copy the previous values
+        const updatedValues = [...(prev[name as keyof Input] as any[])]; 
+        
+        // If the value array for this input doesn't exist, create it
+        if (!updatedValues[index]) {
+            updatedValues[index] = [];
+        }
 
-        setValue((prev) => {
-            // Copy the previous values
-            const updatedValues = [...(prev[name as keyof Input] as any[])];
+        // Update the value at the specific index
+        updatedValues[index] = value;
 
-            // If the value array for this input doesn't exist, create it
-            if (!updatedValues[index]) {
-                updatedValues[index] = [];
-            }
-
-            // Update the value at the specific index
-            updatedValues[index] = value;
-
-            return {
-                ...prev,
-                [name]: updatedValues,
-            };
-        });
+        return {
+            ...prev,
+            [name]: updatedValues,
+        };
+    });
 
     }
-    // console.log(value)
+    console.log(value)
     const handleImplVariant = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
 
@@ -133,7 +132,7 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
 
         handleVariantValueChange(index)(newValues);
     };
-
+   
     const getNonEmptyVariantValues = () => {
         return variantValue.map(values => values.filter(value => value.trim() !== ''));
     };
@@ -141,11 +140,8 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
         setAllVariasi(getNonEmptyVariantValues());
     }, [variantValue, value]);
 
-    // console.log("variantValue : ", variantValue)
-    // console.log("allvariasi : ", allVariasi)
-     let vn1 :number = 0;
-
-    console.log(allVariasi)
+    console.log("variantValue : ",variantValue)
+    console.log("allvariasi : ",allVariasi)
 
     return (
         <section className="flex flex-col gap-4">
@@ -178,15 +174,15 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
                 </div>
             </div>
             <div className='bg-[#f2f2f2] p-4 flex flex-col rounded-md'>
-                {isvariant2 ? (
+                {isClick ? (
                     <SecondVariasi
-                        click={() => setClick(!isvariant2)}
+                        click={() => setClick(!isClick)}
                         onVariantNameChange={(value: string) => handleVariantNameChange(1)(value)}
                         onVariantValueChange={handleVariantValueChange(1)}
 
                     />
                 ) : (
-                    <button className="border-dashed border-2 p-2 hover:border-[#21263c]" onClick={() => setClick(!isvariant2)}>Add Variasi</button>
+                    <button className="border-dashed border-2 p-2 hover:border-[#21263c]" onClick={() => setClick(!isClick)}>Add Variasi</button>
                 )}
             </div>
             <div className='flex flex-col gap-4'>
@@ -204,11 +200,11 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
                     </div>
                     <button className='border rounded-xl p-3 text-sm bg-[#21263c] text-white' onClick={handleImplementAll}>Implement All</button>
                 </div>
-                <table className="border-collapse border border-gray-300" id='mytable'>
+                <table className="border-collapse border border-gray-300">
                     <thead>
                         <tr>
                             <td className="border border-gray-300 p-2 text-center text-sm w-[110px]">{variantName[0] || "Variasi 1"}</td>
-                            {isvariant2 && <td className="border border-gray-300 p-2 text-center text-sm w-[110px]">
+                            {isClick && <td className="border border-gray-300 p-2 text-center text-sm w-[110px]">
                                 {variantName[1] || "Variasi 2"}
                             </td>}
                             <td className="border border-gray-300 p-2 text-center text-sm w-[110px]">Price</td>
@@ -221,122 +217,99 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
                             ? variantValue[0]?.map((value, index) => (
                                 <React.Fragment key={index}>
                                     <tr>
-                                        <td rowSpan={isvariant2 ? allVariasi[1]?.length || 1 : 1} className="border border-gray-300 p-2 text-center text-sm">
+                                        <td rowSpan={isClick ? allVariasi[1]?.length || 1 : 1} className="border border-gray-300 p-2 text-center text-sm">
                                             {value}
                                         </td>
-                                        {isvariant2 ? (
-
+                                        {isClick ? (
+                                            
                                             // new blank column after click the first add variasi button
                                             <>
                                                 <td className="border border-gray-300 p-2 text-center text-sm">
                                                     {allVariasi[1] && allVariasi[1][0]}
                                                 </td>
                                                 <td className="border border-gray-300 p-2 text-center text-sm">
-                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='price' value={isImplemented ? implVariant.price : undefined} />
+                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='price' value={isImplemented ? implVariant.price : undefined} onChange={handleTableInput(0)} />
                                                 </td>
                                                 <td className="border border-gray-300 p-2 text-center text-sm">
-                                                    <input type="number" min={0} name='amount' className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.amount : undefined} />
+                                                    <input type="number" min={0} name='amount' className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.amount : undefined} onChange={handleTableInput(0)} />
                                                 </td>
                                                 <td className="border border-gray-300 p-2 text-center text-sm">
-                                                    <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" name='codeVariant' value={isImplemented ? implVariant.codeVariant : undefined} />
-                                                </td>
+                                                    <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" name='codeVariant' value={isImplemented ? implVariant.codeVariant : undefined} onChange={handleTableInput(0)} />
+                                                </td> 
                                             </>
                                         ) : (
                                             <>
-                                                {/* if variant 2 is null*/}
+                                            {/* if second list variant didnt click */}
                                                 <td className="border border-gray-300 p-2 text-center text-sm">
-                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='price' value={isImplemented ? implVariant.price : value[index]} />
+                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='price' value={isImplemented ? implVariant.price : value[index]} onChange={handleTableInput(0)} />
                                                 </td>
                                                 <td className="border border-gray-300 p-2 text-center text-sm">
-                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='amount' value={isImplemented ? implVariant.amount : undefined} />
+                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='amount' value={isImplemented ? implVariant.amount : undefined} onChange={handleTableInput(0)} />
                                                 </td>
                                                 <td className="border border-gray-300 p-2 text-center text-sm">
-                                                    <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" name='codeVariant' value={isImplemented ? implVariant.codeVariant : undefined} />
+                                                    <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" name='codeVariant' value={isImplemented ? implVariant.codeVariant : undefined} onChange={handleTableInput(0)} />
                                                 </td>
                                             </>
                                         )}
                                     </tr>
-
+                                 
                                 </React.Fragment>
                             ))
-                            : allVariasi[0].map((var1, index1) => (
+                            : variantValue[0]?.slice(0, -1).map((value, index) => (
                                 // if variant 1 filled (static new blank column)
-                                <React.Fragment key={index1} >
-                                    {/* </React.Fragment>{(isvariant2 && allVariasi[1].length >1) ? ( */}
-                                    {(isvariant2) ? (
-                                        <>
-                                   {vn1 = vn1+1}
-
-                                            {allVariasi[1]?.map((var2, index2) => {
-                                                    // {vn1 = vn1+1}
-
-                                                {
-                                                    {<p>uh4uth4u</p>}
-                                                    <tr >
-                                                        {vn1 == 1 && (
-                                                            <td
-                                                                rowSpan={isvariant2 ? allVariasi[1]?.length || 1 : 1} className="border border-gray-300 p-2 text-center text-sm">
-                                                                {var1}
-                                                            </td>
-                                                        )}
-                                                        
-                                                        <td className="border border-gray-300 p-2 text-center text-sm">
-                                                                {var2}
-                                                            </td>
-                                                        <td className="border border-gray-300 p-2 text-center text-sm">
-                                                            <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.price : undefined} name='price' onChange={handleTableInput(index2, var2)} />
-                                                        </td>
-                                                        <td className="border border-gray-300 p-2 text-center text-sm">
-                                                            <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.amount : undefined} name='amount' onChange={handleTableInput(index2, var2)} />
-                                                        </td>
-                                                        <td className="border border-gray-300 p-2 text-center text-sm">
-                                                            <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" value={isImplemented ? implVariant.codeVariant : undefined} name='codeVariant' onChange={handleTableInput(index2, var2)} />
-                                                        </td>
-                                                    </tr>
-                                                        { console.log(var2 + "; " + index2) }
-
-                                                }
-
-                                            })}
-
-                                        </>
-                                    ) 
-                                    : (
-                                        // if variantValue 1 filled but variant2 value didnt clicked
-                                        <tr >
-                                            <td
-                                                rowSpan={isvariant2 ? allVariasi[1]?.length || 1 : 1} className="border border-gray-300 p-2 text-center text-sm">
-                                                {var1}
-                                            </td>
-
-
-                                            <td className="border border-gray-300 p-2 text-center text-sm">
-                                                <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='price' />
-                                            </td>
-                                            <td className="border border-gray-300 p-2 text-center text-sm">
-                                                <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='amount' />
-                                            </td>
-                                            <td className="border border-gray-300 p-2 text-center text-sm">
-                                                <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" name='codeVariant' />
-                                            </td>
-                                        </tr>
-                                    )}
-                                    {/* {isvariant2 && allVariasi[1]?.slice(1).map((secondValue, secondIndex) => (
+                                <React.Fragment key={index}>
+                                    <tr>
+                                        <td rowSpan={isClick ? allVariasi[1]?.length || 1 : 1} className="border border-gray-300 p-2 text-center text-sm">
+                                            {value}
+                                        </td>
+                                        {isClick ? (
+                                            <>
+                                            
+                                                <td className="border border-gray-300 p-2 text-center text-sm">
+                                                    {allVariasi[1] && allVariasi[1][0]}
+                                                </td>
+                                                <td className="border border-gray-300 p-2 text-center text-sm">
+                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.price : undefined} name='price' onChange={handleTableInput(index  )} />
+                                                </td>
+                                                <td className="border border-gray-300 p-2 text-center text-sm">
+                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.amount : undefined} name='amount' onChange={handleTableInput(index)} />
+                                                </td>
+                                                <td className="border border-gray-300 p-2 text-center text-sm">
+                                                    <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" value={isImplemented ? implVariant.codeVariant : undefined} name='codeVariant' onChange={handleTableInput(index)} />
+                                                </td>
+                                            </>
+                                        ) : (
+                                            // if variantValue 1 filled but variant2 value didnt clicked
+                                            <>
+                                                <td className="border border-gray-300 p-2 text-center text-sm">
+                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='price' onChange={handleTableInput(index)} />
+                                                </td>
+                                                <td className="border border-gray-300 p-2 text-center text-sm">
+                                                    <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" name='amount' onChange={handleTableInput(index)} />
+                                                </td>
+                                                <td className="border border-gray-300 p-2 text-center text-sm">
+                                                    <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" name='codeVariant' onChange={handleTableInput(index)} />
+                                                </td>
+                                            </>
+                                        )}
+                                    </tr>
+                                    {isClick && allVariasi[1]?.slice(1).map((secondValue, secondIndex) => (
                                         <tr key={`${index}-${secondIndex}`}>
                                             <td className="border border-gray-300 p-2 text-center text-sm">
                                                 {secondValue}
-                                                x       </td>
-                                            <td className="border border-gray-300 p-2 text-center text-sm">
-                                                <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.price : undefined} name='price' onChange={handleTableInput(secondIndex)} />
+                                                fffff
                                             </td>
                                             <td className="border border-gray-300 p-2 text-center text-sm">
-                                                <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.amount : undefined} name='amount' onChange={handleTableInput(index + secondIndex)} />
+                                                <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.price : undefined} name='price' onChange={handleTableInput( secondValue.length - (secondValue.length - secondIndex +1) )} />
                                             </td>
                                             <td className="border border-gray-300 p-2 text-center text-sm">
-                                                <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" value={isImplemented ? implVariant.codeVariant : undefined} name='codeVariant' onChange={handleTableInput(index + secondIndex)} />
+                                                <input type="number" min={0} className="w-full border p-2 rounded-lg" placeholder="0" value={isImplemented ? implVariant.amount : undefined} name='amount' onChange={handleTableInput(index + secondIndex )} />
+                                            </td>
+                                            <td className="border border-gray-300 p-2 text-center text-sm">
+                                                <input type="text" className="w-full border p-2 rounded-lg" placeholder="Input Code Variasi" value={isImplemented ? implVariant.codeVariant : undefined} name='codeVariant' onChange={handleTableInput(index + secondIndex )} />
                                             </td>
                                         </tr>
-                                    ))} */}
+                                    ))}
                                 </React.Fragment>
                             ))
                         )}
@@ -344,7 +317,7 @@ const Variasi = ({ click, getValue }: { click: () => void, getValue: (props: Inp
                 </table>
             </div>
 
-        </section >
+        </section>
     );
 };
 

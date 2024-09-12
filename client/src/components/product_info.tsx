@@ -9,7 +9,7 @@ interface Product {
     name: string;
     description: string;
     category_name: string;
-    price: string;
+    price: number;
     status: boolean;
 }
 
@@ -25,11 +25,11 @@ interface Input {
     name?: string;
     description?: string;
     category_name?: string;
-    price?: number[][];
-    amount?: number[][];
+    price?: number[];
+    amount?: number[];
     variantName?: string[];
     variantValue?: string[][];
-    codeVariant?: string[][]
+    codeVariant?: string[]
     parentId?: number;
   }
 
@@ -46,7 +46,7 @@ const ProductInfo = ({ getValue }: Props) => {
         name: "",
         description: "",
         category_name: "",
-        price: "",  
+        price: 0,  
         status: false,
     });
 
@@ -63,7 +63,7 @@ const ProductInfo = ({ getValue }: Props) => {
     useEffect(() => {
         getValue({
             ...value,
-            price: [[parseFloat(value.price)]], // Convert string to number
+            price: [value.price], // Convert string to number
         }); 
     }, [value]); // Add value as a dependency
 

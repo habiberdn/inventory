@@ -8,11 +8,11 @@ interface Input {
   name?: string;
   description?: string;
   category_name?: string;
-  price?: number[][];
-  amount?: number[][];
+  price?: number[];
+  amount?: number[];
   variantName?: string[];
   variantValue?: string[][];
-  codeVariant?: string[][]
+  codeVariant?: string[]
   parentId?: number;
 }
 
@@ -30,14 +30,16 @@ function AddProduct() {
   })
 
   const getValue = (input: Input) => {
-    console.log(input)
+    // console.log(input)
     setInput((prev) => ({
       ...prev,
       ...input,
     }));
   };
 
-  console.log(input)
+
+
+  // console.log(input)
   return (
     <main className="flex flex-col h-screen bg-[#f7f7fe]">
       <div className="flex h-full">

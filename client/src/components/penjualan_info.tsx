@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Variasi from "./variasi";
 import { Input } from "../app/ui/input";
 
@@ -18,11 +18,11 @@ interface Input {
     name?: string;
     description?: string;
     category_name?: string;
-    price?: number[][];
-    amount?: number[][];
+    price?: number[];
+    amount?: number[];
     variantName?: string[];
     variantValue?: string[][];
-    codeVariant?: string[][]
+    codeVariant?: string[]
     parentId?: number;
   }
 

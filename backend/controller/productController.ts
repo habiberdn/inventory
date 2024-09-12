@@ -1,4 +1,4 @@
-import { PrismaClient, Status } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { AppError } from "../utils/appError";
 
 const prisma = new PrismaClient();
@@ -12,16 +12,13 @@ const corsHeaders = {
 const createProduct = async (req: Request): Promise<Response> => {
     try {
         const body = await req.json();
-        const { name, description,category_name,prize,amount } = body;
+        const { name, description,category_name,amount, } = body;
 
         const product = await prisma.product.create({
             data: {
                 name,
                 description,
-                status: body.status as Status,
                 category_name,
-                prize,
-                amount
 
             },
         });

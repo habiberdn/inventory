@@ -8,18 +8,6 @@ interface SecondVariasiProps {
     onVariantValueChange: (values: string[]) => void;
 }
 
-interface Input {
-    name?: string;
-    description?: string;
-    category_name?: string;
-    price?: number[][];
-    amount?: number[][];
-    variantName?: string[];
-    variantValue?: string[][];
-    codeVariant?: string[][]
-    parentId?: number;
-  }
-
 const SecondVariasi = ({ click, onVariantNameChange, onVariantValueChange }: SecondVariasiProps) => {
     const [variantName, setVariantName] = useState<string>('');
     const [inputs, setInputs] = useState<string[]>(['']);
