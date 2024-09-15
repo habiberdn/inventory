@@ -29,25 +29,37 @@ model Product {
 }
 
 model Variant{
-  id            Int        @id @unique @default(autoincrement())
-  variantName   String     
-  product       Product    @relation(fields: [product_name], references: [name])
-  product_name  String
-  variantValue  VariantValue[]
-  parentId      Int?       
-  parent        Variant?  @relation("VariantToSubcategories", fields: [parentId], references: [id])
-  subcategories Variant[] @relation("VariantToSubcategories")
+  id                 Int        @id @unique @default(autoincrement())
+  variantName        String
+  secondVariant      String?
+  product            Product    @relation(fields: [product_name], references: [name])
+  product_name       String
+  variantValue       VariantValue[]
+  secondVariantValue SecondVariantValue[]
+  stock              Stock[]             
 }
 
 model VariantValue{
   id            Int        @id @unique @default(autoincrement())
   variantValue  String
-  secondVariant String?
-  variant       Variant    @relation(fields: [variantName], references: [variantName])
-  variantName   String
+  variant       Variant    @relation(fields: [variantNameId], references: [id])
+  variantNameId Int
+}
+
+model SecondVariantValue {
+  id              Int        @id @unique @default(autoincrement())
+  variantValue    String
+  variant         Variant    @relation(fields: [VariantId], references: [id])
+  VariantId       Int
+}
+
+model Stock {
+  id            Int        @id @unique @default(autoincrement())
   price         Int
   amount        Int
-  codeVariant   String       
+  codeVariant   String  
+  variant       Variant    @relation(fields: [VariantId], references: [id])
+  VariantId     Int
 }
 
 model Category {
