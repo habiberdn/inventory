@@ -149,24 +149,16 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
     }
   
     try {
-      // Build the entire hierarchical structure from the flat list
       const hierarchicalData = buildHierarchy(categories);
 
-      // Debug: Log the hierarchical data
       console.log('Hierarchical Data:', hierarchicalData);
 
-      // Send the hierarchical data to the backend
-      // await axios.post('http://localhost:3000/category', hierarchicalData);
-
-      // Log the selected path for debugging
       getValue(displayHierarchy())
       console.log('Selected Path:', displayHierarchy());
 
-      // Close the modal on success
       closeModal();
     } catch (error) {
       console.error('Error saving categories:', error);
-      // Optionally, handle the error in the UI (e.g., show a message)
     }
   };
 

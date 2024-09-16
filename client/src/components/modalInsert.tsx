@@ -13,11 +13,10 @@ interface Category {
 interface ModalProps {
   isClick: boolean;
   category: Category[];
-  getValue: (category: string) => void;
   closeModal: () => void;
 }
 
-const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
+const Modal = ({ isClick, closeModal, category }: ModalProps) => {
   const [selectedPath, setSelectedPath] = useState<number[]>([]);
   const [groupedCategories, setGroupedCategories] = useState<{ [key: number]: Category[] }>({});
   const [newCategoryName, setNewCategoryName] = useState<string>('');
@@ -45,8 +44,7 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
       const grouped: { [key: number]: Category[] } = {};
 
       data.forEach((item) => {
-        const parentId = item.parentId ?? 0; // Default to 0 if parentId is undefined
-
+        const parentId = item.parentId ?? 0; 
         if (!grouped[parentId]) {
           grouped[parentId] = [];
         }
@@ -115,18 +113,16 @@ const Modal = ({ isClick, closeModal, category, getValue }: ModalProps) => {
     const newLevel = (categories.find((cat) => cat.id === parentId)?.level ?? -1) + 1;
   
     const newCategory: Category = {
-      id: categories.length + 1, // Assign a new ID (you might want to handle this differently)
+      id: categories.length + 1, 
       category_name: newCategoryName,
       level: newLevel,
       parentId: parentId === 0 ? undefined : parentId,
     };
   
-    // Log the new category to the console
     console.log('New Category:', newCategory);
   
     try {
       await axios.post<Category>("http://localhost:3000/category", newCategory);
-      // Update categories with the new category
       setCategories((prev) => [...prev, newCategory]);
       setNewCategoryName('');
   
