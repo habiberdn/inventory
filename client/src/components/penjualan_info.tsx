@@ -20,11 +20,12 @@ interface Input {
     category_name?: string;
     price?: number[];
     amount?: number[];
-    variantName?: string[];
+    variantName?: string;
+    secondVariant?: string;
     variantValue?: string[][];
     codeVariant?: string[]
     parentId?: number;
-  }
+}
 
 const PenjualanInfo =  ({ getValue }: { getValue: (input: Input) => void }) => {
     const [isVariantClick, setVarianClick] = useState(false);
@@ -61,6 +62,9 @@ const PenjualanInfo =  ({ getValue }: { getValue: (input: Input) => void }) => {
                         <button className="border-dashed border-2 p-2 hover:border-[#21263c] font-sans" onClick={handleClickVariant}>Add Variasi</button>
                         <label htmlFor="Price" className="text-sm font-sans">Price</label>
                         <Input type="text" id="Price" placeholder="Price" name="price" onChange={handleChangeInput} />
+                        <label htmlFor="amount" className="text-sm font-sans">Amount</label>
+                        <Input type="text" id="amount" placeholder="Amount" name="amount" onChange={handleChangeInput} />
+
                     </div>
                 )}
             </div>
